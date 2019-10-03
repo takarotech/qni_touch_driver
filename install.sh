@@ -1,2 +1,13 @@
 #!/bin/bash
-sudo -H pip3 install smbus2
+
+#-> Make sure we don't run as root
+if (( EUID == 0 )); then
+   echo 'Please run without sudo!' 1>&2
+   exit 1
+fi
+
+#-> Install i2c package
+pip3 install smbus2
+
+#-> Enable i2c, 
+sudo raspi-config nonint do_i2c 0
