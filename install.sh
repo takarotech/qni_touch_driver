@@ -7,7 +7,7 @@ if (( EUID == 0 )); then
 fi
 
 #-> Install i2c package
-pip3 install smbus2
+sudo -H pip3 install smbus2
 
 #-> Enable i2c, 
 sudo raspi-config nonint do_i2c 0
