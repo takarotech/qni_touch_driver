@@ -11,3 +11,6 @@ sudo -H pip3 install smbus2
 
 #-> Enable i2c, 
 sudo raspi-config nonint do_i2c 0
+
+#-> Add to autostart
+echo @$(pwd)/run_qni_touch_driver.sh >> $HOME/.config/lxsession/LXDE-pi/autostart
