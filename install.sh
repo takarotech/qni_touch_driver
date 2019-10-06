@@ -6,6 +6,9 @@ if (( EUID == 0 )); then
    exit 1
 fi
 
+#-> Go to the directory of this script
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
 #-> Install i2c package
 sudo -H pip3 install smbus2
 
