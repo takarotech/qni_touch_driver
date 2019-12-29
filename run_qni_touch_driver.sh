@@ -8,7 +8,7 @@ fi
 
 #-> Make sure the driver is not running yet
 QNI_TOUCH_DRIVER_BIN=./src/qni_touch_driver.py
-if pgrep -f $QNI_LED_DRIVER_BIN > /dev/null; then
+if pgrep -f $QNI_TOUCH_DRIVER_BIN > /dev/null; then
 	echo 'Please kill previous touch driver!' 1>&2
 	exit 2
 fi

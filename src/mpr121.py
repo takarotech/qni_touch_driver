@@ -124,7 +124,7 @@ class Mpr121(object):
     def reset(self):
         self._dev.write(0x80, [0x63])
 
-    def config_regs(self):
+    def config_regs(self, threshold=2, debounce=7):
         # software reset
         self.reset()
         # goto stand-by in order to write settings
@@ -132,7 +132,7 @@ class Mpr121(object):
         self._reg_write_hook(True)
         self._configured = False
         # set all electrodes threshholds
-        self.regs.electrode_threshold._write([2] * 26)
+        self.regs.electrode_threshold._write([threshold] * 26)
         # set baseline filters
         self.regs.baseline_filters.set(
             rising_mhd=0x01,
@@ -144,7 +144,7 @@ class Mpr121(object):
             falling_ncl=0xFF,
             falling_fdl=0x02)
         # 7 readings for touch and release
-        self.regs.debounce.set(touch=7, release=7)
+        self.regs.debounce.set(touch=debounce, release=debounce)
         # charge electrodes with 63mA in 1us
         self.regs.afe_configuration.set(cdc=63, ffi=0, esi=0, sfi=3, cdt=2)
         # auto config baseline and filters
