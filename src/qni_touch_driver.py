@@ -22,6 +22,7 @@ class QniTouchDriver(object):
         GPIO.output(self.LED_ENABLE_PIN, GPIO.LOW)
         self.electrodes.init()
         GPIO.setup(self.LED_ENABLE_PIN, GPIO.IN)
+        GPIO.cleanup()
 
     def mainloop(self):
         while True:
