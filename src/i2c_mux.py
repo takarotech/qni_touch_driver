@@ -7,6 +7,7 @@ import subprocess
 class MuxI2c(object):
 
     I2C_CHANNEL = 1
+    MAX_READ_ERR = 20
     bus = None
     _logger = logging.getLogger('mux_i2c')
     _I2C_BASE_ADDRESS = 0x70
@@ -17,6 +18,8 @@ class MuxI2c(object):
         self.i2c_address = i2c_address
         self.mux_addr = mux_addr_off
         self._io_msg = 'Failed %%s 0x%02X [0x%%02X] %%s bytes' % (i2c_address,)
+        self._last_reads = {}
+        self._last_reads_count = {}
 
         if self.bus is None:
             self.bus = smbus2.SMBus(self.I2C_CHANNEL)
@@ -58,11 +61,21 @@ class MuxI2c(object):
     def read(self, reg_address, size=1):
         self._set_mux()
         try:
-            return self.bus.read_i2c_block_data(
+            self._last_reads[reg_address] = self.bus.read_i2c_block_data(
                 self.i2c_address, reg_address, size)
+            self._last_reads_count[reg_address] = 0
+            return self._last_reads[reg_address]
         except Exception:
             self._logger.error(self._io_msg, 'reading from', reg_address, size)
-            return [0] * size
+            if reg_address in self._last_reads:
+                if self._last_reads_count[reg_address] > self.MAX_READ_ERR:
+                    self._last_reads[reg_address] = [0] * size
+                else:
+                    self._last_reads_count[reg_address] += 1
+            else:
+                self._last_reads[reg_address] = [0] * size
+                self._last_reads_count[reg_address] = 0
+            return self._last_reads[reg_address]
 
     def write(self, reg_address, data):
         self._set_mux()
